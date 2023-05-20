@@ -1,0 +1,12 @@
+{
+  "APP": {
+    "TITLE": "my-new-ts-app",
+    "HEADER": {
+      "LANGUAGES": {
+        "TITLE": "Langage",
+        "FRENCH": "Français",
+        "ENGLISH": "Anglais (US)"
+      }
+    }
+  }
+}
