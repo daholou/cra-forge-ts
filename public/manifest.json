@@ -1,6 +1,6 @@
 {
-  "short_name": "TODO-CHANGE-ME!",
-  "name": "TODO-CHANGE-ME!",
+  "short_name": "cra-forge-ts",
+  "name": "cra-forge-ts",
   "icons": [
     {
       "src": "favicon.ico",

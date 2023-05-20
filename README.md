@@ -38,30 +38,24 @@ In `public/manifest.json`:
 ```
 
 ---
-3. Delete the `.git` folder and run the usual commands:
+3. Run the usual commands:
 ```
 git init
 git add .
 git commit -am "Go :)"
-```
-We will create a new GitHub project for the application, without modifying `cra-forge-ts`.
-
----
-4. Establish a connection to the remote repository and commit all files to the `main` branch.
-```
-git remote add origin https://github.com/daholou/my-new-ts-app.git
 git branch -M main
+git remote add origin https://github.com/daholou/my-new-ts-app.git
 git push -u origin main
 ```
 
 ---
-5. Deploy to GitHub Pages
+4. Deploy to GitHub Pages
 ```
 yarn run deploy
 ```
 
 ---
-6. Rename the folder `.github.sample` into `.github`, then commit and push your changes. This will set up an automatic GitHub Action to redeploy GitHub Pages whenever a push happens on the `main` branch.
+5. Rename the folder `.github.sample` into `.github`, then commit and push your changes. This will set up an automatic GitHub Action to redeploy GitHub Pages whenever a push happens on the `main` branch.
 
 ---
-7. Create a new branch called `develop` with `git checkout -b develop`. Make `develop` the default branch on GitHub.
+6. Create a new branch called `develop` with `git checkout -b develop`. Make `develop` the default branch on GitHub.
