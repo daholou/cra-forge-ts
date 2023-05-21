@@ -13,6 +13,7 @@
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "bootstrap": "^5.2.3",
+    "fs": "^0.0.1-security",
     "i18next": "^22.4.15",
     "i18next-browser-languagedetector": "^7.0.1",
     "i18next-http-backend": "^2.2.0",
@@ -21,16 +22,34 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.2",
     "react-scripts": "5.0.1",
+    "readline": "^1.3.0",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "boop": "node replaceWord.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "craco eject"
+    "eject": "craco eject",
+
+    "step-1": "rm -rf .git",
+    "step-2": "yarn install",
+    "step-3": "node replaceWord.js %npm_config_name%",
+    "step-4": "git init && git add . && git commit -am 'Forging project...'",
+    "step-5": "git branch -M main && git remote add origin https://github.com/daholou/my-new-ts-app.git && git push -u origin main",
+    "step-6": "yarn run deploy",
+    "step-7": "yarn run renameFolder.js && git commit -am 'Setting up GitHub Actions...' && git push",
+    "step-8": "git checkout -b develop && git push",
+    "go": "yarn run step-1 && yarn run step-2 && yarn run step-3 && yarn run step-4 && yarn run step-5 && yarn run step-6 && yarn run step-7 && yarn run step-8",
+
+    "sandbox:test-1": "node script-1.js %npm_config_variable1% %npm_config_variable2%",
+    "sandbox:test-2": "node script-2.js %npm_config_variable1%",
+    "sandbox:test-3": "node script-2.js %npm_config_variable1%",
+    "sandbox:test-4": "node script-2.js %npm_config_variable1%",
+    "sandbox:test-5": "node script-2.js %npm_config_variable1%",
   },
   "eslintConfig": {
     "extends": [
