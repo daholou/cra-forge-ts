@@ -69,3 +69,34 @@ yarn run deploy
 
 ---
 6. Create a new branch called `develop` with `git checkout -b develop`. Make `develop` the default branch on GitHub.
+
+
+### NEW PLAN
+
+rename that thing
+"config": {
+    "name": "cra-forge-ts"
+},
+
+npm run do-it-all --name=hello-world-app
+    1. script1 ==> alter package.json 
+        "config": { "name": "hello-world-app" }
+        Now we can pass the name to each of our scripts as follows
+        "my-script": "command --name process.env.npm_package_config_name || 'nope'"
+    2. script2 ==> `rm -rf .git`
+    3. script3 ==> `yarn install`
+    4. script4 ==> edit some files using process.env.npm_package_config_name
+        `node replaceWord.js`
+    5. script5 ==> `git init`
+    6. script6 ==> `git add .`
+    7. script7 ==> `git commit -am 'Forging project...'`
+    8. script8 ==> `git branch -M main`
+    9. script9 ==> `git remote add origin https://github.com/daholou/$npm_package_config_name.git`
+    10. script10 ==> `git push -u origin main`
+    11. script11 ==> `yarn run deploy`
+    12. script12 ==> create .github/workflows/github-pages.yml
+        `node copyFile.js`
+    13. script13 ==> `git checkout -b develop`
+    14. script14 ==> `git commit -am 'Setting up GitHub Actions...'`
+    15. script15 ==> `git push`
+    16. go to github.com, make develop the default branch

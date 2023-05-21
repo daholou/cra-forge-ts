@@ -2,12 +2,16 @@ const fs = require('fs');
 const readline = require('readline');
 
 const myOldAppName = 'my-new-ts-app';
-const myNewAppName = process.argv[2];
+const myNewAppName = process.env.npm_package_config_name;
 
 if (myNewAppName === null || myNewAppName === undefined || myNewAppName.length === 0) {
-  throw new Error("New app name cannot be empty");
+  const msg = "New app name cannot be empty";
+  console.error(msg);
+  throw new Error(msg);
 } else if (myNewAppName === 'cra-forge-ts') {
-  throw new Error("New app name cannot be 'cra-forge-ts'");
+  const msg = `New app name cannot be ${myNewAppName}`;
+  console.error(msg);
+  throw new Error(msg);
 }
 
 const editFile = (filePath) => {
