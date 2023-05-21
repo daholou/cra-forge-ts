@@ -36,6 +36,16 @@ In `public/manifest.json`:
     "name": "my-new-ts-app"
 }
 ```
+In `src/i18next/index.ts`:
+```
+i18nInstance
+    .use(...)
+    .init({
+        backend: {
+            loadPath: '/my-new-ts-app/locales/{{lng}}/{{ns}}.json'
+        }
+    })
+```
 
 ---
 3. Run the usual commands:
