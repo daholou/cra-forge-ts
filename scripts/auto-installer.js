@@ -10,20 +10,11 @@ const validateSoftware = () => {
     shell.echo('Sorry, this script requires git');
     shell.exit(1);
   }
-  if (!shell.which('yarn')) {
-    shell.echo('Sorry, this script requires yarn');
-    shell.exit(1);
-  }
 };
 
 // rm -rf .git
 const deleteGitFolder = () => {
   shell.rm('-rf', '.git');
-};
-
-// yarn install
-const installYarn = () => {
-  shell.exec('yarn install');
 };
 
 // checks that the project name is valid
@@ -91,10 +82,21 @@ const deployGitHubPages = () => {
   shell.exec('yarn run deploy');
 };
 
-// cp .github.sample/workflows/.github-pages.yml .github/workflows/.github-pages.yml
+// mkdir ./.github/workflows
+// mv github-pages.sample.yml ./.github/workflows/.github-pages.yml
+// git commit -am "Setting up GitHub Actions..."
+// git push
+// git checkout -b develop
+// git push
 const initGitHubActions = () => {
-  shell.cp('.github.sample/workflows/.github-pages.yml', '.github/workflows/.github-pages.yml');
+  shell.mkdir('-p', './.github/workflows');
+  shell.mv('github-pages.sample.yml', './.github/workflows/.github-pages.yml');
+  shell.exec('git commit -am "Setting up GitHub Actions..."');
+  shell.exec('git push');
+  shell.exec('git checkout -b develop');
+  shell.exec('git push');
 };
+
 
 const conclude = () => {
   shell.echo('Now go to github.com and make `develop` the default branch');
@@ -105,7 +107,6 @@ const autoInstall = async () => {
   try {
     validateSoftware();
     deleteGitFolder();
-    installYarn();
     const appName = inputAppName();
     editProjectFilesWithAppName(appName);
     await createGitRepository(appName);

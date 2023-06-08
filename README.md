@@ -13,13 +13,13 @@ having the following available from the beginning:
 Here are the steps to follow to begin development on a new application:
 
 ---
-1. Clone this repository and rename it with `git clone https://github.com/daholou/cra-forge-ts.git my-new-ts-app`.
+1. Clone this repository and rename it with `git clone https://github.com/daholou/cra-forge-ts.git my-new-ts-app`. Run `yarn install`.
 
 ---
-2. Run the installer script with `yarn run auto-installer`. Keep in mind that you need to have `node`, `git` and `yarn` installed for the script to function properly.
+2. Run the auto-installer script with `yarn run auto-installer`. Keep in mind that you need to have `node` and `git` installed for the script to function properly.
 
 ---
-3. Simply follow the instructions given during the installation. You need to provide a name for your project, as well as a GitHub Personal Access Token.
+3. Simply follow the instructions given during the installation. You will need to provide a valid name for your project, as well as a GitHub Personal Access Token (with at least repo scope).
 
 ---
 4. When the installation is complete, your project should be ready to go. It should have its own GitHub repository, and be deployed on its own GitHub Pages. Don't forget to make `develop` the default branch.
