@@ -1,1 +1,5 @@
-export const BASE_APP_NAME = 'cra-forge-ts';
+const BASE_APP_NAME = 'cra-forge-ts';
+
+module.exports = {
+  BASE_APP_NAME
+};

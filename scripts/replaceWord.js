@@ -1,7 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 
-export const replaceWord = (filePath, wordToReplace, someOtherWord) => {
+const replaceWord = (filePath, wordToReplace, someOtherWord) => {
   console.log(` ___ Editing file : [${filePath}]`);
   const rl = readline.createInterface({
     input: fs.createReadStream(filePath),
@@ -23,3 +23,7 @@ export const replaceWord = (filePath, wordToReplace, someOtherWord) => {
     console.log(` === Successfully edited file : [${filePath}]`);
   });
 }
+
+module.exports = {
+  replaceWord
+};

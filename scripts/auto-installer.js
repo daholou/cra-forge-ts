@@ -120,4 +120,4 @@ const autoInstall = async () => {
   }
 }
 
-await autoInstall();
+autoInstall();
