@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "homepage": "https://daholou.github.io/cra-forge-ts",
   "private": true,
-  "config": {
-    "name": "cra-forge-ts"
-  },
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "^5.16.5",
@@ -17,15 +14,19 @@
     "@types/react-dom": "^18.2.4",
     "bootstrap": "^5.2.3",
     "fs": "^0.0.1-security",
+    "fs-extra": "^11.1.1",
     "i18next": "^22.4.15",
     "i18next-browser-languagedetector": "^7.0.1",
     "i18next-http-backend": "^2.2.0",
+    "octokit": "^2.0.19",
+    "prompt-sync": "^4.2.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.2",
     "react-scripts": "5.0.1",
     "readline": "^1.3.0",
+    "shelljs": "^0.8.5",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -36,15 +37,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
-    "step-1": "rm -rf .git",
-    "step-2": "yarn install",
-    "step-3": "node scripts/replaceWord.js",
-    "step-4": "git init && git add . && git commit -am 'Forging project...'",
-    "step-5": "git branch -M main && git remote add origin https://github.com/daholou/$npm_package_config_name.git && git push -u origin main",
-    "step-6": "yarn run deploy",
-    "step-7": "node scripts/copyFile.js && git commit -am 'Setting up GitHub Actions...' && git push",
-    "step-8": "git checkout -b develop && git push",
-    "go": "yarn run step-1 && yarn run step-2 && yarn run step-3 && yarn run step-4 && yarn run step-5 && yarn run step-6 && yarn run step-7 && yarn run step-8"
+    "auto-installer": "node scripts/auto-installer.js"
   },
   "eslintConfig": {
     "extends": [
