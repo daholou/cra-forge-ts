@@ -87,16 +87,15 @@ const deployGitHubPages = () => {
 // git commit -am "Setting up GitHub Actions..."
 // git push
 // git checkout -b develop
-// git push
+// git push --set-upstream origin develop
 const initGitHubActions = () => {
   shell.mkdir('-p', './.github/workflows');
   shell.mv('github-pages.sample.yml', './.github/workflows/.github-pages.yml');
   shell.exec('git commit -am "Setting up GitHub Actions..."');
   shell.exec('git push');
   shell.exec('git checkout -b develop');
-  shell.exec('git push');
+  shell.exec('git push --set-upstream origin develop');
 };
-
 
 const conclude = () => {
   shell.echo('Now go to github.com and make `develop` the default branch');
@@ -122,3 +121,10 @@ const autoInstall = async () => {
 }
 
 autoInstall();
+
+// todo - catch createGitRepository() errors
+//  on name input and GH-token validity
+
+// todo - rollback the project if things go south (with git Octokit ?)
+
+// todo - user friendly prompt to let the user exit (x, Ctrl+C, ...)
