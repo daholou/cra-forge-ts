@@ -13,7 +13,7 @@ const stripTrailingSeparator = (str) => {
 };
 
 /**
- *  Gets the name of the current working dir (last url segment)
+ * Gets the name of the current working dir (last url segment)
  */
 const getCurrentWorkingDirName = () => {
   const currentWorkingDir = shell.pwd();

@@ -19,7 +19,7 @@ Here are the steps to follow to begin development on a new application:
 2. Run the auto-installer script with `yarn run auto-installer`. Keep in mind that you need to have `node` and `git` installed for the script to function properly.
 
 ---
-3. Simply follow the instructions given during the installation. You will need to provide a valid name for your project, as well as a GitHub Personal Access Token (with at least repo scope).
+3. Simply follow the instructions given during the installation. You will need to provide a GitHub Personal Access Token (with at least repo scope), as well as a valid name for your project.
 
 ---
 4. When the installation is complete, your project should be ready to go. It should have its own GitHub repository, and be deployed on its own GitHub Pages. Don't forget to make `develop` the default branch.
