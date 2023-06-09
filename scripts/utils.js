@@ -24,7 +24,7 @@ const getCurrentWorkingDirName = () => {
 
 const log = {
   info: (...data) => console.log('$', ...data),
-  error: (...data) => console.error('$', ...data)
+  error: (...data) => console.error('*** ERROR - ', ...data)
 };
 
 /**

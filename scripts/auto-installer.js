@@ -174,6 +174,7 @@ const deployGitHubPages = () => {
 const initGitHubActions = () => {
   shell.mkdir('-p', './.github/workflows');
   shell.mv('github-pages.sample.yml', './.github/workflows/.github-pages.yml');
+  shell.exec('git add ./.github/workflows/.github-pages.yml');
   shell.exec('git commit -am "Setting up GitHub Actions..."');
   shell.exec('git push');
   shell.exec('git checkout -b develop');
