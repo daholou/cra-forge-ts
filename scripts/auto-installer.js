@@ -1,18 +1,11 @@
 const shell = require('shelljs');
 const { replaceWord } = require('./replaceWord');
-const { log, promptWithEscape, getCurrentWorkingDirName } = require('./utils');
+const { validateSoftware, log, promptWithEscape, getCurrentWorkingDirName } = require('./utils');
 const { BASE_APP_NAME } = require('./constants');
 const { Octokit } = require('octokit');
+const { CRAForgeTsError } = require('./CRAForgeTsError');
 
 const CURRENT_WORKING_DIR_NAME = getCurrentWorkingDirName();
-
-// check if git is installed
-const validateSoftware = () => {
-  if (!shell.which('git')) {
-    shell.echo('Sorry, this script requires git');
-    shell.exit(1);
-  }
-};
 
 // rm -rf .git
 const deleteGitFolder = () => {
@@ -124,8 +117,11 @@ const inputPersonalAccessToken = async () => {
   return { token, tokenRepoNames };
 };
 
-
-// edit project files with a new appName
+/**
+ * Edits some project files with a new appName
+ *
+ * @param appName - the new app name
+ */
 const editProjectFilesWithAppName = (appName) => {
   replaceWord('package.json', BASE_APP_NAME, appName);
   replaceWord('public/index.html', BASE_APP_NAME, appName);
@@ -133,7 +129,12 @@ const editProjectFilesWithAppName = (appName) => {
   replaceWord('src/i18next/index.ts', BASE_APP_NAME, appName);
 };
 
-// creates a GitHub repository
+/**
+ * Creates a new GitHub repository
+ *
+ * @param token - a valid personal access token
+ * @param appName - the new app name (also repository name)
+ */
 const createGitRepository = async (token, appName) => {
   const octokit = new Octokit({ auth: token });
   await octokit.request('POST /user/repos', {
@@ -144,13 +145,17 @@ const createGitRepository = async (token, appName) => {
   });
 };
 
-// git init
-// git add .
-// git commit -m "Forging project..."
-// git init
-// git branch -M main
-// git remote add origin https://github.com/daholou/${appName}.git
-// git push -u origin main
+/**
+ * Runs the following commands :
+ * <p>git init</p>
+ * <p>git add .</p>
+ * <p>git commit -m "Forging project..."</p>
+ * <p>git branch -M main</p>
+ * <p>git remote add origin https://github.com/daholou/${appName}.git</p>
+ * <p>git push -u origin main</p>
+ *
+ * @param appName - the new app name
+ */
 const initGitRepository = (appName) => {
   shell.exec('git init');
   shell.exec('git add .');
@@ -160,17 +165,25 @@ const initGitRepository = (appName) => {
   shell.exec('git push -u origin main');
 };
 
-// yarn deploy
+
+/**
+ * Runs the following commands :
+ * <p>yarn run deploy</p>
+ */
 const deployGitHubPages = () => {
   shell.exec('yarn run deploy');
 };
 
-// mkdir ./.github/workflows
-// mv github-pages.sample.yml ./.github/workflows/.github-pages.yml
-// git commit -am "Setting up GitHub Actions..."
-// git push
-// git checkout -b develop
-// git push --set-upstream origin develop
+/**
+ * Runs the following commands :
+ * <p>mkdir ./.github/workflows</p>
+ * <p>mv github-pages.sample.yml ./.github/workflows/.github-pages.yml</p>
+ * <p>git add ./.github/workflows/.github-pages.yml</p>
+ * <p>git commit -am "Setting up GitHub Actions..."</p>
+ * <p>git push</p>
+ * <p>git checkout -b develop</p>
+ * <p>git push --set-upstream origin develop</p>
+ */
 const initGitHubActions = () => {
   shell.mkdir('-p', './.github/workflows');
   shell.mv('github-pages.sample.yml', './.github/workflows/.github-pages.yml');
@@ -181,8 +194,13 @@ const initGitHubActions = () => {
   shell.exec('git push --set-upstream origin develop');
 };
 
+/**
+ * Runs all steps of the installation process
+ *
+ * @returns {Promise<void>}
+ */
 const autoInstall = async () => {
-  validateSoftware();
+  validateSoftware([ 'git' ]);
   deleteGitFolder();
   const { token, tokenRepoNames } = await inputPersonalAccessToken();
   const appName = inputAppName(tokenRepoNames);
@@ -199,7 +217,12 @@ autoInstall()
     log.info('Don\'t forget to go to https://github.com/ and make `develop` the default branch.');
   })
   .catch((err) => {
-    log.error(err);
-    log.error('Something went wrong during the installation...');
-    // todo - rollback the project if things go south (with git Octokit ?)
+    if (err.name === CRAForgeTsError.name) {
+      log.error(err.message);
+      log.error('Something went wrong during the installation...');
+    } else {
+      log.error('An unexpected error occurred !', err);
+      throw err;
+    }
+    // todo - rollback the project if things go wrong ? delete repo ? reset ?
   });

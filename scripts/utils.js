@@ -1,5 +1,6 @@
 const shell = require('shelljs');
 const path = require('node:path');
+const { CRAForgeTsError } = require('./CRAForgeTsError');
 const prompt = require('prompt-sync')();
 
 /**
@@ -37,15 +38,28 @@ const log = {
 const promptWithEscape = (text, escapeKey = 'q') => {
   const data = prompt(`$ ${text} (Press '${escapeKey}' to quit) : `);
   if (data === escapeKey) {
-    log.info('Installation aborted by user.');
-    shell.exit(1);
+    throw new CRAForgeTsError('Installation was aborted by the user.');
   }
   return data;
+};
+
+/**
+ * Checks that all tools are installed
+ *
+ * @param commands tools needed
+ */
+const validateSoftware = (commands = []) => {
+  commands.forEach(command => {
+    if (!shell.which(command)) {
+      throw new CRAForgeTsError(`Sorry, this script requires ${command}.`);
+    }
+  });
 };
 
 module.exports = {
   stripTrailingSeparator,
   getCurrentWorkingDirName,
   promptWithEscape,
-  log
+  log,
+  validateSoftware
 };
