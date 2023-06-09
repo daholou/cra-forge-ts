@@ -17,7 +17,7 @@ const deleteGitFolder = () => {
  *
  * @param name - the proposed name
  * @param repoNames - names of the repositories owned by the current user
- * @returns true iff the proposed name is valid
+ * @returns true iff the proposed name is valid, and the chosen name
  */
 const validateAppName = (name = '', repoNames = []) => {
   if (name.length === 0) {
@@ -26,21 +26,21 @@ const validateAppName = (name = '', repoNames = []) => {
   if (name === null || name === undefined || name.length === 0) {
     log.error(`Invalid name "${name}"`);
     log.error('The app name cannot be empty.');
-    return false;
+    return { isValid: false, actualName: name };
   } else if (!/^[a-zA-Z0-9_.-]*$/.test(name)) {
     log.error(`Invalid name "${name}"`);
     log.error('The app name can contain only letters, digits, \'_\', \'.\' and \'-\'.');
-    return false;
+    return { isValid: false, actualName: name };
   } else if (name === BASE_APP_NAME) {
     log.error(`Invalid name "${name}"`);
     log.error(`The app name cannot be ${name}.`);
-    return false;
+    return { isValid: false, actualName: name };
   } else if (repoNames.includes(name)) {
     log.error(`Invalid name "${name}"`);
     log.error('A GitHub repository with that name already exists.');
-    return false;
+    return { isValid: false, actualName: name };
   }
-  return true;
+  return { isValid: true, actualName: name };
 };
 
 /**
@@ -54,7 +54,9 @@ const inputAppName = (repoNames = []) => {
   let isAppNameValid = false;
   while (!isAppNameValid) {
     appName = promptWithEscape(`Enter your app name, or leave empty to use ${CURRENT_WORKING_DIR_NAME}`);
-    isAppNameValid = validateAppName(appName, repoNames);
+    const { isValid, actualName } = validateAppName(appName, repoNames);
+    isAppNameValid = isValid;
+    appName = actualName;
   }
   return appName;
 };
@@ -93,7 +95,7 @@ const validatePersonalAccessToken = async (token) => {
     return { isValid: true, repoNames: myRepoNames };
   } catch (err) {
     log.error(err);
-    log.error(`Error ${err.status} - ${err.data.message}`);
+    log.error(`Error ${err.status} - ${err.response.data.message}`);
     return { isValid: false, repoNames: [] };
   }
 };
