@@ -1,8 +1,10 @@
 const shell = require('shelljs');
-const { replaceWord } = require("./replaceWord");
-const { BASE_APP_NAME } = require("./constants");
-const { Octokit } = require("octokit");
-const prompt = require('prompt-sync')();
+const { replaceWord } = require('./replaceWord');
+const { log, promptWithEscape, getCurrentWorkingDirName } = require('./utils');
+const { BASE_APP_NAME } = require('./constants');
+const { Octokit } = require('octokit');
+
+const CURRENT_WORKING_DIR_NAME = getCurrentWorkingDirName();
 
 // check if git is installed
 const validateSoftware = () => {
@@ -17,28 +19,111 @@ const deleteGitFolder = () => {
   shell.rm('-rf', '.git');
 };
 
-// checks that the project name is valid
-const validateAppName = (name) => {
+/**
+ * Checks whether a project name is valid.
+ *
+ * @param name - the proposed name
+ * @param repoNames - names of the repositories owned by the current user
+ * @returns true iff the proposed name is valid
+ */
+const validateAppName = (name = '', repoNames = []) => {
+  if (name.length === 0) {
+    name = CURRENT_WORKING_DIR_NAME;
+  }
   if (name === null || name === undefined || name.length === 0) {
-    console.error('New app name cannot be empty');
+    log.error(`Invalid name "${name}"`);
+    log.error('The app name cannot be empty.');
+    return false;
+  } else if (! /^[a-zA-Z0-9_.-]*$/.test(name)) {
+    log.error(`Invalid name "${name}"`);
+    log.error('The app name can contain only letters, digits, \'_\', \'.\' and \'-\'.');
     return false;
   } else if (name === BASE_APP_NAME) {
-    console.error(`New app name cannot be [${name}]`);
+    log.error(`Invalid name "${name}"`);
+    log.error(`The app name cannot be ${name}.`);
+    return false;
+  } else if (repoNames.includes(name)) {
+    log.error(`Invalid name "${name}"`);
+    log.error('A GitHub repository with that name already exists.');
     return false;
   }
   return true;
 }
 
-// lets the user choose a valid project name
-const inputAppName = () => {
+/**
+ * Lets the user choose a valid project name
+ *
+ * @param repoNames - names of the repositories owned by the current user
+ * @returns the chosen project name
+ */
+const inputAppName = (repoNames = []) => {
   let appName;
   let isAppNameValid = false;
   while (!isAppNameValid) {
-    appName = prompt('Enter your app name : ');
-    isAppNameValid = validateAppName(appName);
+    appName = promptWithEscape(`Enter your app name, or leave empty to use ${CURRENT_WORKING_DIR_NAME}`);
+    isAppNameValid = validateAppName(appName, repoNames);
   }
   return appName;
 }
+
+/**
+ * Checks whether the scope of a GitHub personal access token is valid.
+ *
+ * @param xOAuthScopes - the token scope
+ * @returns true iff the token scope is valid
+ */
+const isValidScopeToken = (xOAuthScopes = '') => {
+  const scopes = xOAuthScopes.split(', ');
+  return scopes.includes('repo');
+}
+
+/**
+ * Checks whether a GitHub personal access token is valid.
+ *
+ * @param token - the proposed token
+ * @returns true iff the proposed token is valid
+ */
+const validatePersonalAccessToken = async (token) => {
+  const octokit = new Octokit({ auth: token });
+  try {
+    const userData = await octokit.request('/user');
+    log.info(`Welcome ${userData.data.name} !`);
+    const repoData = await octokit.request('/user/repos');
+    if (!isValidScopeToken(repoData.headers['x-oauth-scopes'])) {
+      log.error(`Invalid token ${token}`);
+      log.error('The token scope must be at least \'repo\' .');
+      return { isValid: false, repoNames: [] };
+    }
+    const myRepoNames = repoData.data
+      .filter(repo => repo.owner.login === userData.data.login)
+      .map(repo => repo.name);
+    return { isValid: true, repoNames: myRepoNames };
+  } catch(err) {
+    log.error(err);
+    log.error(`Error ${err.status} - ${err.data.message}`);
+    return { isValid: false, repoNames: [] };
+  }
+}
+
+/**
+ * Authenticates the current user with a valid personal access token.
+ *
+ * @return { token, tokenRepoNames } - the personal access token, and the list
+ *  of each repo name owned by the current user.
+ */
+const inputPersonalAccessToken = async () => {
+  let token;
+  let isTokenValid = false;
+  let tokenRepoNames = [];
+  while (!isTokenValid) {
+    token = promptWithEscape('Enter your GitHub Personal Access Token');
+    const { isValid, repoNames } = await validatePersonalAccessToken(token);
+    isTokenValid = isValid;
+    tokenRepoNames = repoNames;
+  }
+  return { token, tokenRepoNames };
+}
+
 
 // edit project files with a new appName
 const editProjectFilesWithAppName = (appName) => {
@@ -49,16 +134,14 @@ const editProjectFilesWithAppName = (appName) => {
 };
 
 // creates a GitHub repository
-const createGitRepository = async (appName) => {
-  const personalAccessToken = prompt('Enter your GitHub Personal Access Token : ');
-  const octokit = new Octokit({auth: personalAccessToken});
+const createGitRepository = async (token, appName) => {
+  const octokit = new Octokit({ auth: token });
   await octokit.request('POST /user/repos', {
     name: appName,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
     }
   });
-  return personalAccessToken;
 };
 
 // git init
@@ -97,34 +180,25 @@ const initGitHubActions = () => {
   shell.exec('git push --set-upstream origin develop');
 };
 
-const conclude = () => {
-  shell.echo('Now go to github.com and make `develop` the default branch');
-}
-
-//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
 const autoInstall = async () => {
-  try {
-    validateSoftware();
-    deleteGitFolder();
-    const appName = inputAppName();
-    editProjectFilesWithAppName(appName);
-    await createGitRepository(appName);
-    initGitRepository(appName);
-    deployGitHubPages();
-    initGitHubActions();
-    conclude();
-  } catch (err) {
-    const msg = 'Oops! Something went wrong during the installation...';
-    console.error(msg, err);
-    throw new Error(msg);
-  }
-}
+  validateSoftware();
+  deleteGitFolder();
+  const { token, tokenRepoNames } = await inputPersonalAccessToken();
+  const appName = inputAppName(tokenRepoNames);
+  await createGitRepository(token, appName);
+  editProjectFilesWithAppName(appName);
+  initGitRepository(appName);
+  deployGitHubPages();
+  initGitHubActions();
+};
 
-autoInstall();
-
-// todo - catch createGitRepository() errors
-//  on name input and GH-token validity
-
-// todo - rollback the project if things go south (with git Octokit ?)
-
-// todo - user friendly prompt to let the user exit (x, Ctrl+C, ...)
+autoInstall()
+  .then(() => {
+    log.info('Installation successful !');
+    log.info('Don\'t forget to go to https://github.com/ and make `develop` the default branch.');
+  })
+  .catch((err) => {
+    log.error(err);
+    log.error('Something went wrong during the installation...');
+    // todo - rollback the project if things go south (with git Octokit ?)
+  });
