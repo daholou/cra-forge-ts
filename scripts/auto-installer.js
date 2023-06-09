@@ -34,7 +34,7 @@ const validateAppName = (name = '', repoNames = []) => {
     log.error(`Invalid name "${name}"`);
     log.error('The app name cannot be empty.');
     return false;
-  } else if (! /^[a-zA-Z0-9_.-]*$/.test(name)) {
+  } else if (!/^[a-zA-Z0-9_.-]*$/.test(name)) {
     log.error(`Invalid name "${name}"`);
     log.error('The app name can contain only letters, digits, \'_\', \'.\' and \'-\'.');
     return false;
@@ -48,7 +48,7 @@ const validateAppName = (name = '', repoNames = []) => {
     return false;
   }
   return true;
-}
+};
 
 /**
  * Lets the user choose a valid project name
@@ -64,7 +64,7 @@ const inputAppName = (repoNames = []) => {
     isAppNameValid = validateAppName(appName, repoNames);
   }
   return appName;
-}
+};
 
 /**
  * Checks whether the scope of a GitHub personal access token is valid.
@@ -75,7 +75,7 @@ const inputAppName = (repoNames = []) => {
 const isValidScopeToken = (xOAuthScopes = '') => {
   const scopes = xOAuthScopes.split(', ');
   return scopes.includes('repo');
-}
+};
 
 /**
  * Checks whether a GitHub personal access token is valid.
@@ -98,12 +98,12 @@ const validatePersonalAccessToken = async (token) => {
       .filter(repo => repo.owner.login === userData.data.login)
       .map(repo => repo.name);
     return { isValid: true, repoNames: myRepoNames };
-  } catch(err) {
+  } catch (err) {
     log.error(err);
     log.error(`Error ${err.status} - ${err.data.message}`);
     return { isValid: false, repoNames: [] };
   }
-}
+};
 
 /**
  * Authenticates the current user with a valid personal access token.
@@ -122,7 +122,7 @@ const inputPersonalAccessToken = async () => {
     tokenRepoNames = repoNames;
   }
   return { token, tokenRepoNames };
-}
+};
 
 
 // edit project files with a new appName

@@ -10,7 +10,7 @@ const replaceWord = (filePath, wordToReplace, someOtherWord) => {
   });
 
   const newLines = [];
-  const regex = new RegExp("\\b" + wordToReplace + "\\b", 'g');
+  const regex = new RegExp('\\b' + wordToReplace + '\\b', 'g');
 
   rl.on('line', line => {
     const newLine = line.replace(regex, someOtherWord);
@@ -22,7 +22,7 @@ const replaceWord = (filePath, wordToReplace, someOtherWord) => {
     fs.writeFileSync(filePath, newContent);
     console.log(` === Successfully edited file : [${filePath}]`);
   });
-}
+};
 
 module.exports = {
   replaceWord

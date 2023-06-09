@@ -1,5 +1,5 @@
-const shell = require("shelljs");
-const path = require("node:path");
+const shell = require('shelljs');
+const path = require('node:path');
 const prompt = require('prompt-sync')();
 
 /**
@@ -41,7 +41,7 @@ const promptWithEscape = (text, escapeKey = 'q') => {
     shell.exit(1);
   }
   return data;
-}
+};
 
 module.exports = {
   stripTrailingSeparator,
