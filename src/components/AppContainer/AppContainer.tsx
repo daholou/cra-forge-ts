@@ -12,7 +12,7 @@ const AppContainer = () =>
       className={'app-container'}
     >
       <div>{t('APP.TITLE')}</div>
-      <div>{'TODO - main content goes here!'}</div>
+      <div>{t('APP.PLACEHOLDER')}</div>
     </Container>
   );
 };

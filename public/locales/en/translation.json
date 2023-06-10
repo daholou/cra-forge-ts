@@ -1,6 +1,7 @@
 {
   "APP": {
-    "TITLE": "Project cra-forge-ts",
+    "TITLE": "cra-forge-ts",
+    "PLACEHOLDER": "Add some content here...",
     "HEADER": {
       "LANGUAGES": {
         "TITLE": "Language",
