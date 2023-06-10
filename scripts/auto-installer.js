@@ -138,8 +138,10 @@ const editProjectFilesWithAppName = async (appName) => {
   await replaceWord('package.json', BASE_APP_NAME, appName);
   await replaceWord('public/index.html', BASE_APP_NAME, appName);
   await replaceWord('public/manifest.json', BASE_APP_NAME, appName);
-  await replaceWord('src/i18next/index.ts', BASE_APP_NAME, appName);
-  await replaceWord('src/components/AppContainer/AppContainer.tsx', BASE_APP_NAME, appName);
+  await replaceWord('public/locales/en/translation.json', BASE_APP_NAME, appName);
+  await replaceWord('public/locales/fr/translation.json', BASE_APP_NAME, appName);
+  await replaceWord('src/i18next/index.ts', BASE_APP_NAME, CURRENT_WORKING_DIR_NAME);
+  await replaceWord('src/constants/index.ts', BASE_APP_NAME, appName);
 };
 
 /**
