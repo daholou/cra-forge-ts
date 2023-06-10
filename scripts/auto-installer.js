@@ -95,16 +95,16 @@ const validatePersonalAccessToken = async (token) => {
     if (!isValidScopeToken(repoData.headers['x-oauth-scopes'])) {
       log.error(`Invalid token ${token}`);
       log.error('The token scope must be at least \'repo\' .');
-      return { isValid: false, repoNames: [] };
+      return { isValid: false, repoNames: [], userLogin: '' };
     }
     const myRepoNames = repoData.data
       .filter(repo => repo.owner.login === userData.data.login)
       .map(repo => repo.name);
-    return { isValid: true, repoNames: myRepoNames };
+    return { isValid: true, repoNames: myRepoNames, userLogin: userData.data.login };
   } catch (err) {
     log.error(err);
     log.error(`Error ${err.status} - ${err.response.data.message}`);
-    return { isValid: false, repoNames: [] };
+    return { isValid: false, repoNames: [], userLogin: '' };
   }
 };
 
@@ -118,13 +118,15 @@ const inputPersonalAccessToken = async () => {
   let token;
   let isTokenValid = false;
   let tokenRepoNames = [];
+  let login = '';
   while (!isTokenValid) {
     token = promptWithEscape('Enter your GitHub Personal Access Token');
-    const { isValid, repoNames } = await validatePersonalAccessToken(token);
+    const { isValid, repoNames, userLogin } = await validatePersonalAccessToken(token);
     isTokenValid = isValid;
     tokenRepoNames = repoNames;
+    login = userLogin;
   }
-  return { token, tokenRepoNames };
+  return { token, tokenRepoNames, login };
 };
 
 /**
@@ -137,6 +139,7 @@ const editProjectFilesWithAppName = async (appName) => {
   await replaceWord('public/index.html', BASE_APP_NAME, appName);
   await replaceWord('public/manifest.json', BASE_APP_NAME, appName);
   await replaceWord('src/i18next/index.ts', BASE_APP_NAME, appName);
+  await replaceWord('src/components/AppContainer/AppContainer.tsx', BASE_APP_NAME, appName);
 };
 
 /**
@@ -204,6 +207,10 @@ const initGitHubActions = () => {
   shell.exec('git push --set-upstream origin develop');
 };
 
+const remindDefaultBranch = (login, appName) => {
+  log.info(`Don't forget to go to https://github.com/${login}/${appName}/settings and make \`develop\` the default branch.`);
+};
+
 /**
  * Runs all steps of the installation process
  *
@@ -212,19 +219,19 @@ const initGitHubActions = () => {
 const autoInstall = async () => {
   validateSoftware([ 'git' ]);
   deleteGitFolder();
-  const { token, tokenRepoNames } = await inputPersonalAccessToken();
+  const { token, tokenRepoNames, login } = await inputPersonalAccessToken();
   const appName = inputAppName(tokenRepoNames);
   await createGitRepository(token, appName);
   await editProjectFilesWithAppName(appName);
   initGitRepository(appName);
   deployGitHubPages();
   initGitHubActions();
+  remindDefaultBranch(login, appName);
 };
 
 autoInstall()
   .then(() => {
-    log.info('Installation successful !');
-    log.info('Don\'t forget to go to https://github.com/ and make `develop` the default branch.');
+    log.info('Installation was successful !');
   })
   .catch((err) => {
     if (err.name === CRAForgeTsError.name) {

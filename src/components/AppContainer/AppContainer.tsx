@@ -9,6 +9,7 @@ const AppContainer = () =>
       fluid={true}
       className={'app-container'}
     >
+      <div>PROJECT : cra-forge-ts</div>
       <div>TODO - main content goes here!</div>
     </Container>
   );
