@@ -1,13 +1,21 @@
 const shell = require('shelljs');
 const { replaceWord } = require('./replaceWord');
-const { validateSoftware, log, promptWithEscape, getCurrentWorkingDirName } = require('./utils');
+const {
+  validateSoftware,
+  log,
+  promptWithEscape,
+  getCurrentWorkingDirName
+} = require('./utils');
 const { BASE_APP_NAME } = require('./constants');
 const { Octokit } = require('octokit');
 const { CRAForgeTsError } = require('./CRAForgeTsError');
 
 const CURRENT_WORKING_DIR_NAME = getCurrentWorkingDirName();
 
-// rm -rf .git
+/**
+ * Runs the following commands :
+ * <p>rm -rf .git</p>
+ */
 const deleteGitFolder = () => {
   shell.rm('-rf', '.git');
 };
@@ -124,11 +132,11 @@ const inputPersonalAccessToken = async () => {
  *
  * @param appName - the new app name
  */
-const editProjectFilesWithAppName = (appName) => {
-  replaceWord('package.json', BASE_APP_NAME, appName);
-  replaceWord('public/index.html', BASE_APP_NAME, appName);
-  replaceWord('public/manifest.json', BASE_APP_NAME, appName);
-  replaceWord('src/i18next/index.ts', BASE_APP_NAME, appName);
+const editProjectFilesWithAppName = async (appName) => {
+  await replaceWord('package.json', BASE_APP_NAME, appName);
+  await replaceWord('public/index.html', BASE_APP_NAME, appName);
+  await replaceWord('public/manifest.json', BASE_APP_NAME, appName);
+  await replaceWord('src/i18next/index.ts', BASE_APP_NAME, appName);
 };
 
 /**
@@ -207,7 +215,7 @@ const autoInstall = async () => {
   const { token, tokenRepoNames } = await inputPersonalAccessToken();
   const appName = inputAppName(tokenRepoNames);
   await createGitRepository(token, appName);
-  editProjectFilesWithAppName(appName);
+  await editProjectFilesWithAppName(appName);
   initGitRepository(appName);
   deployGitHubPages();
   initGitHubActions();

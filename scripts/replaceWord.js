@@ -1,9 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
+const { log } = require('./utils');
 
-const replaceWord = (filePath, wordToReplace, someOtherWord) => {
-  console.log(` ___ Editing file : [${filePath}]`);
-  const rl = readline.createInterface({
+const replaceWord = async (filePath, wordToReplace, someOtherWord) => {
+  log.info(`Editing file ${filePath} ...`);
+  const readlineInterface = readline.createInterface({
     input: fs.createReadStream(filePath),
     output: process.stdout,
     terminal: false
@@ -12,16 +13,14 @@ const replaceWord = (filePath, wordToReplace, someOtherWord) => {
   const newLines = [];
   const regex = new RegExp('\\b' + wordToReplace + '\\b', 'g');
 
-  rl.on('line', line => {
+  for await (const line of readlineInterface) {
     const newLine = line.replace(regex, someOtherWord);
     newLines.push(newLine);
-  });
+  }
 
-  rl.on('close', () => {
-    const newContent = newLines.join('\n');
-    fs.writeFileSync(filePath, newContent);
-    console.log(` === Successfully edited file : [${filePath}]`);
-  });
+  const newContent = newLines.join('\n');
+  fs.writeFileSync(filePath, newContent);
+  log.info(`Successfully edited file ${filePath} !`);
 };
 
 module.exports = {
