@@ -11,6 +11,7 @@ const { Octokit } = require('octokit');
 const { CRAForgeTsError } = require('./CRAForgeTsError');
 
 const CURRENT_WORKING_DIR_NAME = getCurrentWorkingDirName();
+const ALREADY_INSTALLED = process.env.npm_package_autoInstalled;
 
 /**
  * Runs the following commands :
@@ -209,6 +210,21 @@ const initGitHubActions = () => {
   shell.exec('git push --set-upstream origin develop');
 };
 
+/**
+ * Sets the property "auto-installed" to true in package.json
+ *
+ * @return {Promise<void>}
+ */
+const validateInstallation = async () => {
+  await replaceWord('package.json', /"autoInstalled":\s*false/, '\"autoInstalled\": true');
+}
+
+/**
+ * Reminds about protecting the main branch
+ *
+ * @param login - a GitHub login
+ * @param appName - the new app name (also repository name)
+ */
 const remindDefaultBranch = (login, appName) => {
   log.info(`Don't forget to go to https://github.com/${login}/${appName}/settings and make \`develop\` the default branch.`);
 };
@@ -228,20 +244,33 @@ const autoInstall = async () => {
   initGitRepository(appName);
   deployGitHubPages();
   initGitHubActions();
+  await validateInstallation();
   remindDefaultBranch(login, appName);
 };
 
-autoInstall()
-  .then(() => {
-    log.info('Installation was successful !');
-  })
-  .catch((err) => {
-    if (err.name === CRAForgeTsError.name) {
-      log.error(err.message);
-      log.error('Something went wrong during the installation...');
-    } else {
-      log.error('An unexpected error occurred !', err);
-      throw err;
-    }
-    // todo - rollback the project if things go wrong ? delete repo ? reset ?
-  });
+if (ALREADY_INSTALLED) {
+  log.error('It looks like you already completed the installation. This' +
+    ' script cannot reverse this operation, and thus will not run again on' +
+    ' this project. Running it again would definitely not work, and probably' +
+    ' break something. Sorry !' +
+    '\nIn the event that the installation did not work as intended, you' +
+    ' should just delete this failed attempt and restart from the beginning' +
+    ' by cloning cra-forge-ts again.' +
+    '\nDon\'t forget to delete this folder, as well as its GitHub repository' +
+    ' if it was created anyway.');
+} else {
+  autoInstall()
+    .then(() => {
+      log.info('Installation was successful !');
+    })
+    .catch((err) => {
+      if (err.name === CRAForgeTsError.name) {
+        log.error(err.message);
+        log.error('Something went wrong during the installation...');
+      } else {
+        log.error('An unexpected error occurred !', err);
+        throw err;
+      }
+      // todo - rollback the project if things go wrong ? delete repo ? reset ?
+    });
+}

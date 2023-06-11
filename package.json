@@ -1,6 +1,7 @@
 {
   "name": "cra-forge-ts",
   "version": "0.1.0",
+  "autoInstalled": false,
   "homepage": "https://daholou.github.io/cra-forge-ts",
   "private": true,
   "dependencies": {
