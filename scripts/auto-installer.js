@@ -136,6 +136,8 @@ const inputPersonalAccessToken = async () => {
  * @param appName - the new app name
  */
 const editProjectFilesWithAppName = async (appName) => {
+  await replaceWord('README.sample.md', BASE_APP_NAME, appName);
+  await replaceWord('README.fr.sample.md', BASE_APP_NAME, appName);
   await replaceWord('package.json', BASE_APP_NAME, appName);
   await replaceWord('public/index.html', BASE_APP_NAME, appName);
   await replaceWord('public/manifest.json', BASE_APP_NAME, appName);
@@ -143,6 +145,8 @@ const editProjectFilesWithAppName = async (appName) => {
   await replaceWord('public/locales/fr/translation.json', BASE_APP_NAME, appName);
   await replaceWord('src/i18next/index.ts', BASE_APP_NAME, appName);
   await replaceWord('src/constants/index.ts', BASE_APP_NAME, appName);
+  shell.mv('README.sample.md', 'README.md');
+  shell.mv('README.fr.sample.md', 'README.fr.md');
 };
 
 /**
@@ -241,7 +245,6 @@ const autoInstall = async () => {
   const appName = inputAppName(tokenRepoNames);
   await createGitRepository(token, appName);
   await editProjectFilesWithAppName(appName);
-  // todo - déplacer les fichiers README au bon endroit, supprimer les anciens
   initGitRepository(appName);
   deployGitHubPages();
   initGitHubActions();
