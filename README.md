@@ -1,4 +1,6 @@
 # Create React App Forge (TypeScript)
+[![en](https://img.shields.io/badge/lang-en-yellow.svg)](https://github.com/daholou/cra-forge-ts/blob/main/README.md)
+[![fr](https://img.shields.io/badge/lang-fr-blue.svg)](https://github.com/daholou/cra-forge-ts/blob/main/README.fr.md)
 
 This project is a blank slate from which to start a new React TypeScript
 application with ease. The idea is to benefit from the base
@@ -23,18 +25,18 @@ Here are the steps to follow to begin development on a new application:
 2. Run `yarn install`.
 
 ---
-2. Run the auto-installer script with `yarn run auto-installer`. Keep in 
+3.Run the auto-installer script with `yarn run auto-installer`. Keep in 
    mind that you need to have `node` and `git` installed for the script to 
    function properly.
 
 ---
-3. Simply follow the instructions given during the installation. You will 
+4. Simply follow the instructions given during the installation. You will 
    need to provide a GitHub Personal Access Token (with at least repo scope),
    as well as a valid name for your project (the default would be 
    `my-new-ts-app` for example).
 
 ---
-4. Once the installer script finishes running without errors, your project 
+5. Once the installer script finishes running without errors, your project 
    should be ready to go, meaning that:
    - A repository named `my-new-ts-app` should now exist on your GitHub 
      account.
@@ -50,6 +52,6 @@ Here are the steps to follow to begin development on a new application:
      on branch `main`, the branch `gh-pages` automatically updates.
 
 ---
-5. To protect your branch `main`, don't forget to make `develop` the default 
+6. To protect your branch `main`, don't forget to make `develop` the default 
    branch from github.com.
 
