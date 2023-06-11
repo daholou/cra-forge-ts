@@ -101,7 +101,11 @@ const validatePersonalAccessToken = async (token) => {
     const myRepoNames = repoData.data
       .filter(repo => repo.owner.login === userData.data.login)
       .map(repo => repo.name);
-    return { isValid: true, repoNames: myRepoNames, userLogin: userData.data.login };
+    return {
+      isValid: true,
+      repoNames: myRepoNames,
+      userLogin: userData.data.login
+    };
   } catch (err) {
     log.error(err);
     log.error(`Error ${err.status} - ${err.response.data.message}`);
@@ -122,7 +126,11 @@ const inputPersonalAccessToken = async () => {
   let login = '';
   while (!isTokenValid) {
     token = promptWithEscape('Enter your GitHub Personal Access Token');
-    const { isValid, repoNames, userLogin } = await validatePersonalAccessToken(token);
+    const {
+      isValid,
+      repoNames,
+      userLogin
+    } = await validatePersonalAccessToken(token);
     isTokenValid = isValid;
     tokenRepoNames = repoNames;
     login = userLogin;
@@ -215,13 +223,14 @@ const initGitHubActions = () => {
 };
 
 /**
- * Sets the property "auto-installed" to true in package.json
+ * Sets the property "version" and "autoInstalled" to true in package.json
  *
  * @return {Promise<void>}
  */
 const validateInstallation = async () => {
+  await replaceWord('package.json', /"version":\s*"(\d|.)*"/, '\"version\": \"0.1.0\"');
   await replaceWord('package.json', /"autoInstalled":\s*false/, '\"autoInstalled\": true');
-}
+};
 
 /**
  * Reminds about protecting the main branch
@@ -245,10 +254,10 @@ const autoInstall = async () => {
   const appName = inputAppName(tokenRepoNames);
   await createGitRepository(token, appName);
   await editProjectFilesWithAppName(appName);
+  await validateInstallation();
   initGitRepository(appName);
   deployGitHubPages();
   initGitHubActions();
-  await validateInstallation();
   remindDefaultBranch(login, appName);
 };
 

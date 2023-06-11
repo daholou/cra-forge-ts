@@ -10,8 +10,8 @@ available from the beginning:
 - [gh-pages](https://github.com/tschaub/gh-pages) integration.
 - [craco](https://github.com/dilanx/craco) integration to enable webpack 
   aliases with CRA.
-- a few React components to give a common basic layout between all applications.
-- a basic project structure that can be expanded on as needed.
+- A few React components to give a common basic layout between all applications.
+- A basic project structure that can be expanded on as needed.
 
 # Getting Started
 Here are the steps to follow to begin development on a new application:
@@ -25,7 +25,7 @@ Here are the steps to follow to begin development on a new application:
 2. Run `yarn install`.
 
 ---
-3.Run the auto-installer script with `yarn run auto-installer`. Keep in 
+3. Run the auto-installer script with `yarn run auto-installer`. Keep in 
    mind that you need to have `node` and `git` installed for the script to 
    function properly.
 
