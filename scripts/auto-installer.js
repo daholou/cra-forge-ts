@@ -11,7 +11,7 @@ const { Octokit } = require('octokit');
 const { CRAForgeTsError } = require('./CRAForgeTsError');
 
 const CURRENT_WORKING_DIR_NAME = getCurrentWorkingDirName();
-const ALREADY_INSTALLED = process.env.npm_package_autoInstalled;
+const ALREADY_INSTALLED = Boolean(process.env.npm_package_autoInstalled);
 
 /**
  * Runs the following commands :
